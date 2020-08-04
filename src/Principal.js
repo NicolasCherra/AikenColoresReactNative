@@ -18,7 +18,9 @@ export default function Principal(){
 
     return(
         <View style={Styles.container}>
+
             <Header/>
+            
             <NavigationContainer  >
                 <Router.Navigator
                 initialRouteName="Inicio"
@@ -38,7 +40,9 @@ export default function Principal(){
                     <Router.Screen name="Añadir Producto a la BD"  component={AddProducto} />
                 </Router.Navigator>
             </NavigationContainer>
+
             <Footer/>
+
         </View>
     );
 }
