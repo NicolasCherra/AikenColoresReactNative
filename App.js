@@ -1,21 +1,42 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react'
+import { AppLoading } from 'expo'
+import * as Font from 'expo-font'
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
+import Principal from './src/Principal';
+
+export default function App(props) {
+  const [isLoadingComplete, setLoadingComplete] = useState(false)
+
+  if (!isLoadingComplete && !props.skipLoadingScreen)  {
+    return (
+      <AppLoading
+        startAsync={loadResourcesAsync}
+        onError={handleLoadingError}
+        onFinish={() => handleFinishLoading(setLoadingComplete)}
+      />
+    );
+  }else {
+    return (
+      <Principal/>
+    );
+  }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
+async function loadResourcesAsync() {
+  await Promise.all([
+    Font.loadAsync({
+      Roboto: require("native-base/Fonts/Roboto.ttf"),
+      Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
+      Ionicons: require("native-base/Fonts/Ionicons.ttf")
+    })
+  ])
+}
+
+function handleLoadingError(error) {
+  console.warn(error)
+}
+
+function handleFinishLoading(setLoadingComplete) {
+  setLoadingComplete(true)
+}
