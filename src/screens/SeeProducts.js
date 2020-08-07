@@ -1,6 +1,7 @@
 import  * as React from 'react';
 import {View, Text,TextInput,TouchableHighlight,Button,Image, SafeAreaView, ScrollView,Alert} from 'react-native';
 import axios from 'axios';
+import { CommonActions } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 
@@ -8,8 +9,9 @@ import Styles from '../Styles';
 
 axios.defaults.withCredentials = true;
 
-const SeeProducts=()=>{
+const SeeProducts=({navigation})=>{
        
+    
     let [products,setProductos]=React.useState([]);
     let [recibido,setRecibido]=React.useState(false);
 
@@ -44,14 +46,16 @@ const SeeProducts=()=>{
                         <Text>{products[i].categoria}</Text>
                         <Image source={{uri:"data:image/jpeg;base64,"+products[i].imagenProducto}}  style={Styles.imagenProducto}/>
                         <Text>{products[i].stock}</Text>
+
                         <TouchableHighlight 
                         style={Styles.botonesProducto}
                         activeOpacity={0.6} 
-                        underlayColor="#ff0"                   
+                        underlayColor="#ff0"
+                        onPress={()=>navigation.navigate('Modificar Producto',{_id:products[i]._id})}                                          
                         >
                         <Text 
-                        style={Styles.textProducto} 
-                        >Descripcion</Text>
+                        style={Styles.textProducto}                     
+                        >Modificar</Text>
                         </TouchableHighlight>
 
                         <TouchableHighlight 
@@ -79,23 +83,41 @@ const SeeProducts=()=>{
     }
 
     const eliminarProducto = async (i)=>{
-
-        console.log("ELIMINAR",products[i]._id)
-        const url=`https://aiken-colores-backend.herokuapp.com/souvenir/${products[i]._id}`;
-        try{
-            await axios.delete(url).then(res=>{
-                console.log("Se elimino")
-                Alert.alert("Producto Eliminado Exitosamente");
-                ShowProducts();
-            })
-        }catch(err){
-            console.log(err)
+        var seguro=false;
+        
+        Alert.alert("Advertencia","Estas seguro que quieres eliminar a "+products[i].nombre,[
+            {
+                text: 'Eliminar',
+                onPress: () => seguro=true
+            },
+            {
+                text: 'Cancelar',
+                onPress: () => seguro=false
+            }        
+        ]);
+        if(seguro==true){
+            const url=`https://aiken-colores-backend.herokuapp.com/souvenir/${products[i]._id}`;
+            try{
+                await axios.delete(url).then(res=>{
+                    if(res.status==200){
+                        Alert.alert("Producto Eliminado Exitosamente");
+                        ShowProducts();
+                    }else{
+                        Alert.alert("No se ha podido eliminar el producto");
+                    }
+                    
+                })
+            }catch(err){
+                console.log(err)
+            }
         }
     }
+    
     const cargando = ()=>{
         console.log("Cargando")
         return <Text>Cargando</Text>
     }
+    
 
     return(
         <SafeAreaView>

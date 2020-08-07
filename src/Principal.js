@@ -11,6 +11,7 @@ import Inicio from './screens/Inicio';
 import Categoria from './screens/Categoria';
 import AddProducts from './screens/AddProducts';
 import SeeProducts from './screens/SeeProducts';
+import ModifyProduct from './screens/ModifyProduct';
 
 
 const Router = createDrawerNavigator();
@@ -40,6 +41,7 @@ export default function Principal(){
                     <Router.Screen name="Categoria"  component={Categoria} />
                     <Router.Screen name="Añadir Producto a la BD"  component={AddProducts} />
                     <Router.Screen name="Ver Productos de la BD"  component={SeeProducts} />
+                    <Router.Screen name="Modificar Producto"component={ModifyProduct} />
                 </Router.Navigator>
             </NavigationContainer>
 

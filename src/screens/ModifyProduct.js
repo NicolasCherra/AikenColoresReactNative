@@ -1,19 +1,13 @@
 import * as React from 'react';
-import {View, Text,TextInput,TouchableHighlight,Button,Image, SafeAreaView, ScrollView,Alert} from 'react-native';
 import axios from 'axios';
+import {View, Text,TextInput,TouchableHighlight,Button,Image, SafeAreaView, ScrollView,Alert,RefreshControl} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
-
-
 import Styles from '../Styles';
 
-axios.defaults.withCredentials = true;
-
-export default class AddProducts extends React.Component{
-    
+export default class ModifyProduct extends React.Component{
     constructor(props){
         super(props);
-
         this.state={
             nombre: "",
             categoria: "",
@@ -22,18 +16,38 @@ export default class AddProducts extends React.Component{
             stock: "",
             fecha:"",
             imagenProducto: null,
-            imagen: null
-        };
-
+            imagen: null,
+            cambioFoto:false,
+            refresh:false
+        }
+        this.getProductById=this.getProductById.bind(this);
         this.submit=this.submit.bind(this);
+        this.getPermissionAsync=this.getPermissionAsync.bind(this);
+        this._pickImage=this._pickImage.bind(this);
+        this.onRefresh=this.onRefresh.bind(this);
+        this.wait=this.wait.bind(this);
     }
-    
+
+    componentDidMount(){
+        this.getProductById()
+    }
+
+    async getProductById(){
+        console.log(this.props.route.params);
+        await axios.get(`https://aiken-colores-backend.herokuapp.com/souvenir/${this.props.route.params._id}`).then(res=>{
+            this.setState({nombre: res.data.nombre})
+            this.setState({categoria: res.data.categoria})
+            this.setState({descripcion: res.data.descripcion})
+            this.setState({precio: res.data.precio})
+            this.setState({stock: res.data.stock})
+            this.setState({fecha: res.data.fecha})
+            this.setState({imagenProducto: res.data.imagenProducto})
+        })
+    }
 
     async submit(){
-        //console.log(this.state);
         console.log("boton presionado");
         const getCurrentDate=()=>{
-
             var date = new Date().getDate();
             var month = new Date().getMonth() + 1;
             var year = new Date().getFullYear();
@@ -41,11 +55,10 @@ export default class AddProducts extends React.Component{
             var min=new Date().getMinutes();
             var seg=new Date().getSeconds();
             return date + '/' + month + '/' + year +" " + hor+":"+min+":"+seg;//format: dd-mm-yyyy;
-      }
-        //console.log(getCurrentDate());
-        
+        }
         try{
-           await axios.post("https://aiken-colores-backend.herokuapp.com/souvenir",{
+           await axios.put(`https://aiken-colores-backend.herokuapp.com/souvenir/${this.props.route.params._id}`,
+           {
                 nombre: this.state.nombre,
                 categoria: this.state.categoria,
                 descripcion: this.state.descripcion,
@@ -55,25 +68,12 @@ export default class AddProducts extends React.Component{
                 imagenProducto: this.state.imagenProducto,
                 
             }).then(res=>{
-                if(res.status==200){
-                    Alert.alert("Se ha agregado satifactoriamente");
-                    this.setState({nombre: ""})
-                    this.setState({categoria: ""})
-                    this.setState({descripcion: ""})
-                    this.setState({precio: ""})
-                    this.setState({stock: ""})
-                    this.setState({fecha: ""})
-                    this.setState({imagenProducto: ""})
-                }else{
-                    Alert.alert("No se puedo agregar ha acurrido un error");
-                }
+                Alert.alert("Se ha modificado");
             });
         }catch(err){
             console.log(err)
-        }
-       
+        }       
     }
-
 
     getPermissionAsync = async () => {
         if (Constants.platform.ios) {
@@ -95,24 +95,34 @@ export default class AddProducts extends React.Component{
                     base64: true
                 });
                 if (!result.cancelled) {
+
                     this.setState({ imagenProducto: result.base64 });                    
                     this.setState({ imagen: result.uri});
+                    this.setState({cambioFoto: true});
                 }
 
         } catch (E) {
             console.log(E);
         }
     };
-
-
+    onRefresh(){
+        this.state.refresh=true;
+        this.wait(2000).then(() =>this.state.refresh=false);
+    }
+    wait(timeout){
+        return new Promise(resolve => {
+          setTimeout(resolve, timeout);
+        });
+    }
+    
     render(){
-
-        let { imagenProducto } = this.state;
         return (
             <SafeAreaView>
-                <ScrollView>
+                <ScrollView
+                refreshControl={<RefreshControl refreshing={this.state.refresh} onRefresh={this.onRefresh} />}                
+                >
                     <View style={Styles.main}>
-                        <Text  style={Styles.tituloAdd}>Añadir Nuevo Producto</Text>
+                        <Text  style={Styles.tituloAdd}>Modificar Producto</Text>
                         <TextInput
                             style={Styles.InputTextAdd}
                             placeholder="Nombre"
@@ -144,14 +154,16 @@ export default class AddProducts extends React.Component{
                             value={this.state.stock}
                             onChangeText={text=>this.setState({stock:text})}
                         />
-
                         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',marginTop: 10 }}>
-                            <Button title="Añadir Foto" onPress={this._pickImage} />
-                            <Image source={{ uri: this.state.imagen }} style={{marginTop:10, width: 300, height: 200 }} />
+                            <Button title="Cambiar Foto" color="#f194ff"  onPress={this._pickImage} />  
+                            {
+                                this.state.cambioFoto==true
+                                ?
+                                <Image source={{ uri: this.state.imagen }} style={{marginTop:10, width: 300, height: 200 }} />
+                                :
+                                <Image source={{ uri: "data:image/jpeg;base64,"+this.state.imagenProducto }} style={{marginTop:10, width: 300, height: 200 }} />
+                            }                     
                         </View>
-
-
-
 
                         <TouchableHighlight 
                             style={Styles.botonAdd}
@@ -161,7 +173,7 @@ export default class AddProducts extends React.Component{
                         >
                             <Text 
                             style={Styles.textAdd} 
-                            >Añadir</Text>
+                            >Modificar</Text>
                         </TouchableHighlight>
                     </View>
                 </ScrollView>
@@ -169,4 +181,3 @@ export default class AddProducts extends React.Component{
         );
     }
 }
-
