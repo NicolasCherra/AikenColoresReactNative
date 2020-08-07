@@ -19,7 +19,7 @@ export default class ModifyProduct extends React.Component{
             imagen: null,
             cambioFoto:false,
             refresh:false
-        }
+        }        
         this.getProductById=this.getProductById.bind(this);
         this.submit=this.submit.bind(this);
         this.getPermissionAsync=this.getPermissionAsync.bind(this);
@@ -28,12 +28,15 @@ export default class ModifyProduct extends React.Component{
         this.wait=this.wait.bind(this);
     }
 
+    
+
     componentDidMount(){
+        console.log("COMPONETN")
         this.getProductById()
     }
 
     async getProductById(){
-        console.log(this.props.route.params);
+        console.log("Pidiendo,",this.props.route.params._id)
         await axios.get(`https://aiken-colores-backend.herokuapp.com/souvenir/${this.props.route.params._id}`).then(res=>{
             this.setState({nombre: res.data.nombre})
             this.setState({categoria: res.data.categoria})
@@ -69,6 +72,8 @@ export default class ModifyProduct extends React.Component{
                 
             }).then(res=>{
                 Alert.alert("Se ha modificado");
+                this.props.navigation.goBack()
+
             });
         }catch(err){
             console.log(err)
@@ -95,7 +100,6 @@ export default class ModifyProduct extends React.Component{
                     base64: true
                 });
                 if (!result.cancelled) {
-
                     this.setState({ imagenProducto: result.base64 });                    
                     this.setState({ imagen: result.uri});
                     this.setState({cambioFoto: true});
@@ -107,7 +111,7 @@ export default class ModifyProduct extends React.Component{
     };
     onRefresh(){
         this.state.refresh=true;
-        this.wait(2000).then(() =>this.state.refresh=false);
+        this.wait(2000).then(() =>{this.state.refresh=false; this.getProductById();});
     }
     wait(timeout){
         return new Promise(resolve => {
@@ -172,7 +176,7 @@ export default class ModifyProduct extends React.Component{
                             onPress={this.submit}
                         >
                             <Text 
-                            style={Styles.textAdd} 
+                                style={Styles.textAdd} 
                             >Modificar</Text>
                         </TouchableHighlight>
                     </View>
