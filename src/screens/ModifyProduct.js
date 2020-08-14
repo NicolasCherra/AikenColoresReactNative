@@ -1,6 +1,7 @@
 import * as React from 'react';
 import axios from 'axios';
-import {View, Text,TextInput,TouchableHighlight,Button,Image, SafeAreaView, ScrollView,Alert,RefreshControl} from 'react-native';
+import {View, Text,TextInput,TouchableHighlight,Button,Image, SafeAreaView,
+ScrollView,Alert,RefreshControl} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import Styles from '../Styles';
@@ -28,15 +29,12 @@ export default class ModifyProduct extends React.Component{
         this.wait=this.wait.bind(this);
     }
 
-    
-
     componentDidMount(){
         console.log("COMPONETN")
         this.getProductById()
     }
 
     async getProductById(){
-        console.log("Pidiendo,",this.props.route.params._id)
         await axios.get(`https://aiken-colores-backend.herokuapp.com/souvenir/${this.props.route.params._id}`).then(res=>{
             this.setState({nombre: res.data.nombre})
             this.setState({categoria: res.data.categoria})
@@ -49,7 +47,7 @@ export default class ModifyProduct extends React.Component{
     }
 
     async submit(){
-        console.log("boton presionado");
+
         const getCurrentDate=()=>{
             var date = new Date().getDate();
             var month = new Date().getMonth() + 1;
@@ -59,6 +57,7 @@ export default class ModifyProduct extends React.Component{
             var seg=new Date().getSeconds();
             return date + '/' + month + '/' + year +" " + hor+":"+min+":"+seg;//format: dd-mm-yyyy;
         }
+
         try{
            await axios.put(`https://aiken-colores-backend.herokuapp.com/souvenir/${this.props.route.params._id}`,
            {
@@ -87,99 +86,143 @@ export default class ModifyProduct extends React.Component{
             alert('Sorry, we need camera roll permissions to make this work!');
           }
         }
-    };
+    }
     
     _pickImage = async () => {
         try {
-                let result = await ImagePicker.launchImageLibraryAsync(
-                {
-                    mediaTypes: ImagePicker.MediaTypeOptions.All,
-                    allowsEditing: true,
-                    aspect: [4, 3],
-                    quality: 1,
-                    base64: true
-                });
-                if (!result.cancelled) {
-                    this.setState({ imagenProducto: result.base64 });                    
-                    this.setState({ imagen: result.uri});
-                    this.setState({cambioFoto: true});
-                }
-
+            let result = await ImagePicker.launchImageLibraryAsync({
+                mediaTypes: ImagePicker.MediaTypeOptions.All,
+                allowsEditing: true,
+                aspect: [4, 3],
+                quality: 1,
+                base64: true
+            });
+            if (!result.cancelled) {
+                this.setState({ imagenProducto: result.base64 });                    
+                this.setState({ imagen: result.uri});
+                this.setState({cambioFoto: true});
+            }
         } catch (E) {
             console.log(E);
         }
-    };
+    }
+
     onRefresh(){
         this.state.refresh=true;
         this.wait(2000).then(() =>{this.state.refresh=false; this.getProductById();});
     }
+
     wait(timeout){
         return new Promise(resolve => {
           setTimeout(resolve, timeout);
         });
+    }
+    inputText=()=>{        
+        //let met=[Styles.addProductsInputText]
+        return Styles.InputText;
     }
     
     render(){
         return (
             <SafeAreaView>
                 <ScrollView
-                refreshControl={<RefreshControl refreshing={this.state.refresh} onRefresh={this.onRefresh} />}                
+                    refreshControl={
+                        <RefreshControl 
+                            refreshing={this.state.refresh} 
+                            onRefresh={this.onRefresh} 
+                        />
+                    }                
                 >
-                    <View style={Styles.main}>
-                        <Text  style={Styles.tituloAdd}>Modificar Producto</Text>
+                    <View 
+                        style={Styles.Main}
+                    >
+
+                        <Text  
+                            style={Styles.addProductsTitulo}
+                        >
+                            Modificar Producto
+                        </Text>
+
                         <TextInput
-                            style={Styles.InputTextAdd}
+                            style={this.inputText()}
                             placeholder="Nombre"
                             value={this.state.nombre}
                             onChangeText={text=>this.setState({nombre:text})}
                         />
+
                         <TextInput
-                            style={Styles.InputTextAdd}
+                            style={this.inputText()}
                             placeholder="Categoria"
                             value={this.state.categoria}
                             onChangeText={text=>this.setState({categoria:text})}
                         />
+
                         <TextInput
-                            style={Styles.InputTextAdd}
+                            style={this.inputText()}
                             placeholder="Descripcion"
                             value={this.state.descripcion}
                             onChangeText={text=>this.setState({descripcion:text})}
                         />
+
                         <TextInput
-                            style={Styles.InputTextAdd}
+                            style={this.inputText()}
                             placeholder="Precio"
                             value={this.state.precio}
                             keyboardType="number-pad"
                             onChangeText={text=>this.setState({precio:text})}
                         />
+
                         <TextInput
-                            style={Styles.InputTextAdd}
+                            style={this.inputText()}
                             placeholder="Stock"
                             value={this.state.stock}
                             onChangeText={text=>this.setState({stock:text})}
                         />
-                        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center',marginTop: 10 }}>
-                            <Button title="Cambiar Foto" color="#f194ff"  onPress={this._pickImage} />  
+
+                        <View 
+                            style={{ flex: 1, alignItems: 'center', justifyContent: 'center',marginTop: 10 }}
+                        >
+
+                            <Button 
+                                title="Cambiar Foto" 
+                                color="#f194ff"  
+                                onPress={this._pickImage} 
+                            />
+
                             {
                                 this.state.cambioFoto==true
                                 ?
-                                <Image source={{ uri: this.state.imagen }} style={{marginTop:10, width: 300, height: 200 }} />
+
+                                <Image 
+                                    source={{ uri: this.state.imagen }} 
+                                    style={{marginTop:10, width: 300, height: 200 }} 
+                                />
                                 :
-                                <Image source={{ uri: "data:image/jpeg;base64,"+this.state.imagenProducto }} style={{marginTop:10, width: 300, height: 200 }} />
-                            }                     
+                                <Image 
+                                    source={{ uri: "data:image/jpeg;base64,"+this.state.imagenProducto }} 
+                                    style={{marginTop:10, width: 300, height: 200 }}
+                                />
+                            } 
+
                         </View>
 
                         <TouchableHighlight 
-                            style={Styles.botonAdd}
+                            style={Styles.addProductsBoton}
                             activeOpacity={0.6} 
                             underlayColor="#ff0"
                             onPress={this.submit}
                         >
+
                             <Text 
-                                style={Styles.textAdd} 
-                            >Modificar</Text>
+                                style={Styles.addProductsText} 
+                            >
+                                Modificar
+                            </Text>
+
                         </TouchableHighlight>
+
                     </View>
+
                 </ScrollView>
             </SafeAreaView>
         );

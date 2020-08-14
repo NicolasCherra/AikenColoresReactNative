@@ -1,21 +1,19 @@
 import  * as React from 'react';
-import {View, Text,TextInput,TouchableHighlight,Button,Image, SafeAreaView, ScrollView,Alert} from 'react-native';
+import {View, Text,TouchableHighlight,Button,Image,
+SafeAreaView, ScrollView,RefreshControl, Alert} from 'react-native';
 import axios from 'axios';
-import { CommonActions } from '@react-navigation/native';
-import * as ImagePicker from 'expo-image-picker';
-import * as Permissions from 'expo-permissions';
 import Styles from '../Styles';
 
 const SeeProducts=({navigation})=>{
     let [products,setProductos]=React.useState([]);
     let [recibido,setRecibido]=React.useState(false);
+    let [refresh,setRefresh]=React.useState(false);
 
     React.useEffect( ()=> {
         getProducts()
     },[recibido]);
 
     const getProducts= async ()=>{
-        console.log("GETPRODUCRTWS")
         await axios.get("https://aiken-colores-backend.herokuapp.com/souvenir").then((res)=>{
             setProductos(res.data)
             if(res.data==null){
@@ -27,21 +25,31 @@ const SeeProducts=({navigation})=>{
     }
 
     const ShowProducts=()=>{
-        console.log("SHOW PRODUCTS")
         var productosView=[];
-        if(products!=null){
+
+        if(products!=null){            
             for(let i=0; i<products.length; i++){
                 productosView.push(
-                    <View key={i} style={Styles.contenedorProducto}>
+                    <View 
+                        key={i} 
+                        style={Styles.contenedorProducto}
+                    >
+
                         <Text
                             style={Styles.tituloProducto}
-                        >{products[i].nombre}
+                        >
+                            {products[i].nombre}
                         </Text>
-                        <Text
-                        
-                        >{products[i].categoria}
+
+                        <Text>
+                            {products[i].categoria}
                         </Text>
-                        <Image source={{uri:"data:image/jpeg;base64,"+products[i].imagenProducto}}  style={Styles.imagenProducto}/>
+
+                        <Image 
+                            source={{uri:"data:image/jpeg;base64,"+products[i].imagenProducto}}  
+                            style={Styles.imagenProducto}
+                        />
+
                         <Text>
                             {products[i].stock}
                         </Text>
@@ -52,10 +60,15 @@ const SeeProducts=({navigation})=>{
                             underlayColor="#ff0"
                             onPress={()=>navigation.navigate('Modificar Producto',{_id:products[i]._id})}                                          
                         >
+
                             <Text 
                                 style={Styles.textProducto}                     
-                            >Modificar</Text>
+                            >
+                                Modificar
+                            </Text>
+
                         </TouchableHighlight>
+
                         <TouchableHighlight 
                             style={Styles.botonesProducto}
                             activeOpacity={0.6} 
@@ -65,12 +78,14 @@ const SeeProducts=({navigation})=>{
                         >
                             <Text 
                                 style={Styles.textProducto}                         
-                            >Eliminar</Text>
+                            >
+                                Eliminar
+                            </Text>
+
                         </TouchableHighlight>
                         
                     </View>
-                );
-                
+                );                
             }
             return productosView;
         }else
@@ -113,20 +128,45 @@ const SeeProducts=({navigation})=>{
     }
     
     const cargando = ()=>{
-        console.log("Cargando")
         return <Text>Cargando</Text>
+    }
+
+    const onRefresh=()=>{
+        setRefresh(true);
+        wait(2000).then(() =>{setRefresh(false); getProducts();});
+    }
+
+    const wait=(timeout)=>{
+        return new Promise(resolve => {
+          setTimeout(resolve, timeout);
+        });
     }
     
     return(
         <SafeAreaView>
-            <ScrollView>
-                <View style={Styles.main}>
-                    <Button title="Actualizar" onPress={getProducts}></Button>
-                    <Text>Productos en la BD</Text>
+            <ScrollView
+                refreshControl={
+                    <RefreshControl 
+                        refreshing={refresh} 
+                        onRefresh={onRefresh} 
+                    />
+                }   
+            >
+
+                <View 
+                    style={Styles.Main}
+                >
+
+                    <Text>
+                        Productos en la BD
+                    </Text>
+
                     {recibido ? ShowProducts():cargando()}
+
                 </View>
+
             </ScrollView>
         </SafeAreaView>
-    )
+    );
 }
 export default SeeProducts;

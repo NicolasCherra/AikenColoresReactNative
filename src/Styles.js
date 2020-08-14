@@ -1,13 +1,7 @@
-import {StyleSheet,PixelRatio} from 'react-native';
-
-
-var FONT_BACK_LABEL   = 18;
-if (PixelRatio.get() <= 2) {
-    FONT_BACK_LABEL = 14;
-  }
+import {StyleSheet} from 'react-native';
 
 const Styles = StyleSheet.create({
-    container : {
+    Principal : {
         zIndex: -5,
         flex: 1,
         flexDirection: "column",
@@ -19,20 +13,18 @@ const Styles = StyleSheet.create({
         backgroundColor: "#ff0",
         
     },
-
-    main:{
+    Main:{
         flex: 3,
         marginTop: 20,
         backgroundColor: "#fff",
         alignItems: "center"
     },
-
-    tituloAdd:{
+    addProductsTitulo:{
         marginTop: 8,
         marginBottom:5,
         fontSize: 30
     },
-    InputTextAdd: {
+    InputText: {
         backgroundColor: 'white',
         borderColor: "#ccc",
         marginTop: 10,
@@ -41,21 +33,19 @@ const Styles = StyleSheet.create({
         width: 200
     },
 
-    botonAdd:{
+    addProductsBoton:{
         backgroundColor: "#905",
         height: 50,
         marginTop: 20,
         width: 200,
         borderRadius: 20
     },
-    textAdd:{
+    addProductsText:{
         color: 'white',
         marginTop: 10,
         textAlign: 'center',
         fontSize: 20
     },
-
-
     contenedorProducto:{
         marginTop: 10,
         justifyContent: "center",
@@ -82,14 +72,11 @@ const Styles = StyleSheet.create({
         fontSize: 20,
         color: "#fff"
     },
-
     footer: {
         zIndex: -5,
         flex: 0.1,
-        backgroundColor: "#55f",
-       
+        backgroundColor: "#55f",       
     }
 
 });
-
 export default Styles;
