@@ -117,11 +117,12 @@ export default class ModifyProduct extends React.Component{
           setTimeout(resolve, timeout);
         });
     }
+    
     inputText=()=>{        
         //let met=[Styles.addProductsInputText]
         return Styles.InputText;
     }
-    
+
     render(){
         return (
             <SafeAreaView>

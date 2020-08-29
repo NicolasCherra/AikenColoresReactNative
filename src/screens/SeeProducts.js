@@ -32,11 +32,11 @@ const SeeProducts=({navigation})=>{
                 productosView.push(
                     <View 
                         key={i} 
-                        style={Styles.contenedorProducto}
+                        style={Styles.seeProductsProducto}
                     >
 
                         <Text
-                            style={Styles.tituloProducto}
+                            style={Styles.seeProductsNombre}
                         >
                             {products[i].nombre}
                         </Text>
@@ -47,7 +47,7 @@ const SeeProducts=({navigation})=>{
 
                         <Image 
                             source={{uri:"data:image/jpeg;base64,"+products[i].imagenProducto}}  
-                            style={Styles.imagenProducto}
+                            style={Styles.seeProductsImagen}
                         />
 
                         <Text>
@@ -55,14 +55,14 @@ const SeeProducts=({navigation})=>{
                         </Text>
 
                         <TouchableHighlight 
-                            style={Styles.botonesProducto}
+                            style={Styles.seeProductsBotonModificar}
                             activeOpacity={0.6} 
                             underlayColor="#ff0"
                             onPress={()=>navigation.navigate('Modificar Producto',{_id:products[i]._id})}                                          
                         >
 
                             <Text 
-                                style={Styles.textProducto}                     
+                                style={Styles.seeProductsNombreBoton}                     
                             >
                                 Modificar
                             </Text>
@@ -70,14 +70,14 @@ const SeeProducts=({navigation})=>{
                         </TouchableHighlight>
 
                         <TouchableHighlight 
-                            style={Styles.botonesProducto}
+                            style={Styles.seeProductsBotonEliminar}
                             activeOpacity={0.6} 
                             underlayColor="#f00"
                             key={i}    
                             onPress={()=>eliminarProducto(i)}               
                         >
                             <Text 
-                                style={Styles.textProducto}                         
+                                style={Styles.seeProductsNombreBoton}                         
                             >
                                 Eliminar
                             </Text>

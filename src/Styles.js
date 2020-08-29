@@ -7,12 +7,6 @@ const Styles = StyleSheet.create({
         flexDirection: "column",
         
     },  
-    header: {
-        zIndex: -5,
-        flex: 0.1,
-        backgroundColor: "#ff0",
-        
-    },
     Main:{
         flex: 3,
         marginTop: 20,
@@ -34,7 +28,7 @@ const Styles = StyleSheet.create({
     },
 
     addProductsBoton:{
-        backgroundColor: "#905",
+        backgroundColor: "#009846",
         height: 50,
         marginTop: 20,
         width: 200,
@@ -46,36 +40,44 @@ const Styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 20
     },
-    contenedorProducto:{
+    seeProductsProducto:{
         marginTop: 10,
         justifyContent: "center",
         alignItems: "center",
-        borderWidth: 2
+        width:300,
+        borderWidth: 0.5,
+        borderRadius: 20
     },
-    tituloProducto:{
+    seeProductsNombre:{
         fontSize: 30
     },
-    imagenProducto:{
-        width: 200, 
-        height: 200
+    seeProductsImagen:{
+        width: 250, 
+        height: 250,
+        borderWidth: 1,
+        borderRadius: 20
     },
-    botonesProducto:{
+    seeProductsBotonModificar:{
         marginTop: 5,
         marginBottom: 5,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#624983",
+        backgroundColor: "#009846",
         width: 150,        
-        borderRadius: 30
+        borderRadius: 8
     },
-    textProducto:{
+    seeProductsBotonEliminar:{
+        marginTop: 5,
+        marginBottom: 5,
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#f00",
+        width: 150,        
+        borderRadius: 8
+    },
+    seeProductsNombreBoton:{
         fontSize: 20,
         color: "#fff"
-    },
-    footer: {
-        zIndex: -5,
-        flex: 0.1,
-        backgroundColor: "#55f",       
     }
 
 });

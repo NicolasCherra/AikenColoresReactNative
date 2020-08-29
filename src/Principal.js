@@ -17,13 +17,12 @@ export default function Principal(){
                 <Router.Navigator
                     initialRouteName="Ver Productos de la BD"
                     drawerStyle={{
-                        backgroundColor: '#c6cbef',
+                        backgroundColor: '#fff',                        
                         width: 240
                     }}                  
                     drawerContentOptions={{
                         activeTintColor: '#e91e63',
-                        itemStyle: { marginVertical: 10,backgroundColor: "#fff" },
-                        style:{zIndex:5}
+                        itemStyle: {borderWidth:0.1, marginVertical: 10,backgroundColor: "#fff" }
                     }}
                 >
                     <Router.Screen name="Ver Productos de la BD"  component={SeeProducts} />
